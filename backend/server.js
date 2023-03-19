@@ -3,12 +3,26 @@ import express from "express";
 import dotenv from "dotenv";
 import colors from "colors";
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
-import connectDB from "./config/db.js";
-
+import mongoose from "mongoose";
 import productRoutes from "./routes/productRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
+import orderRoutes from "./routes/orderRoutes.js";
 
 dotenv.config();
+const mongoURI = process.env.MONGO_URI;
+
+const connectDB = async () => {
+  try {
+    const conn = await mongoose.connect(mongoURI, {
+      useUnifiedTopology: true,
+      useNewUrlParser: true,
+    });
+    console.log(`MongoDB Connected : ${conn.connection.host}.cyan.underline`);
+  } catch (e) {
+    console.error(`Error: ${e.message}.red.underline.bold`);
+    process.exit(1);
+  }
+};
 
 connectDB();
 
@@ -23,6 +37,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/products", productRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/orders", orderRoutes);
 
 app.use(notFound);
 app.use(errorHandler);

@@ -62,7 +62,9 @@ export const userDetailsReducer = (state = { user: {} }, action) => {
   }
 };
 
-export const userUpdateProfileReducer = (state = { user: {} }, action) => {
+//git it was this way.
+// export const userUpdateProfileReducer = (state = { user: {} }, action) => {
+export const userUpdateProfileReducer = (state = {}, action) => {
   switch (action.type) {
     // where we make fetch request
     case USER_UPDATE_PROFILE_REQUEST:
