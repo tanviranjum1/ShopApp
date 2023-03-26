@@ -1,24 +1,29 @@
-import mongoose from 'mongoose'
+import mongoose from "mongoose";
 
 const reviewSchema = mongoose.Schema(
   {
     name: { type: String, required: true },
     rating: { type: Number, required: true },
     comment: { type: String, required: true },
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "User",
+    },
   },
   {
     timestamps: true,
   }
-)
+);
 
 // reviews is going to be an array of review objects
 const productSchema = mongoose.Schema(
   {
-      // to know which admin created which product. reference specific model for this object id.
+    // to know which admin created which product. reference specific model for this object id.
     user: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: 'User',
+      ref: "User",
     },
     name: {
       type: String,
@@ -65,8 +70,8 @@ const productSchema = mongoose.Schema(
   {
     timestamps: true,
   }
-)
+);
 
-const Product = mongoose.model('Product', productSchema)
+const Product = mongoose.model("Product", productSchema);
 
-export default Product
+export default Product;
