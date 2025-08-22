@@ -8,7 +8,12 @@
     "start": "node backend/server",
     "server": "nodemon backend/server",
     "client": "npm start --prefix frontend",
-    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "dev": "node scripts/port-manager.js && node scripts/setup-proxy.js && concurrently \"npm run server\" \"npm run client\"",
+    "setup": "node scripts/setup-proxy.js",
+    "config": "node scripts/setup-proxy.js",
+    "ports": "node scripts/port-manager.js",
+    "auth": "node scripts/clear-auth.js",
+    "env": "node scripts/setup-env.js",
     "data:import": "node backend/seeder",
     "data:destroy": "node backend/seeder -d"
   },
@@ -27,6 +32,7 @@
   },
   "devDependencies": {
     "concurrently": "^5.3.0",
+    "cross-env": "^7.0.3",
     "nodemon": "^2.0.4"
   }
 }

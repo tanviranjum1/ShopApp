@@ -55,15 +55,32 @@ const OrderScreen = ({ match, history }) => {
     }
 
     const addPayPalScript = async () => {
-      const { data: clientId } = await axios.get("/api/config/paypal");
-      const script = document.createElement("script");
-      script.type = "text/javascript";
-      script.src = `https://www.paypal.com/sdk/js?client-id=${clientId}`;
-      script.async = true;
-      script.onload = () => {
+      try {
+        const { data: clientId } = await axios.get("/api/config/paypal");
+        
+        // Check if we have a valid PayPal client ID
+        if (!clientId || clientId === 'test' || clientId === 'sb') {
+          console.log('PayPal not configured - skipping PayPal integration');
+          setSdkReady(true); // Set to true to avoid blocking the UI
+          return;
+        }
+        
+        const script = document.createElement("script");
+        script.type = "text/javascript";
+        script.src = `https://www.paypal.com/sdk/js?client-id=${clientId}`;
+        script.async = true;
+        script.onload = () => {
+          setSdkReady(true);
+        };
+        script.onerror = () => {
+          console.log('PayPal SDK failed to load - continuing without PayPal');
+          setSdkReady(true);
+        };
+        document.body.appendChild(script);
+      } catch (error) {
+        console.log('Failed to load PayPal configuration - continuing without PayPal');
         setSdkReady(true);
-      };
-      document.body.appendChild(script);
+      }
     };
 
     if (!order || successPay || successDeliver || order._id !== orderId) {
@@ -78,7 +95,7 @@ const OrderScreen = ({ match, history }) => {
         setSdkReady(true);
       }
     }
-  }, [dispatch, orderId, successPay, successDeliver, order]);
+  }, [dispatch, orderId, successPay, successDeliver, order, history, userInfo]);
 
   // //   check for the order and also make sure that the order ID matches the ID in the URL.
   // // If it does not, then dispatch getOrderDetails() to fetch the most recent order
@@ -175,39 +192,36 @@ const OrderScreen = ({ match, history }) => {
 
             <ListGroup.Item>
               <h2>Order Items</h2>
-              <p>
-                <strong>Method:</strong>
-                {order.orderItems.length === 0 ? (
-                  <Message>Your cart is empty</Message>
-                ) : (
-                  <ListGroup variant="flush">
-                    {order.orderItems.map((item, index) => (
-                      <ListGroup.Item key={index}>
-                        <Row>
-                          <Col md={1}>
-                            <Image
-                              src={item.image}
-                              alt={item.name}
-                              fluid
-                              rounded
-                            />
-                          </Col>
-                          <Col>
-                            {/* product is the id here */}
-                            <Link to={`/product/${item.product}`}>
-                              {item.name}
-                            </Link>
-                          </Col>
-                          <Col md={4}>
-                            {item.qty} x ${item.price} = $
-                            {item.qty * item.price}
-                          </Col>
-                        </Row>
-                      </ListGroup.Item>
-                    ))}
-                  </ListGroup>
-                )}
-              </p>
+              {order.orderItems.length === 0 ? (
+                <Message>Your cart is empty</Message>
+              ) : (
+                <ListGroup variant="flush">
+                  {order.orderItems.map((item, index) => (
+                    <ListGroup.Item key={index}>
+                      <Row>
+                        <Col md={1}>
+                          <Image
+                            src={item.image}
+                            alt={item.name}
+                            fluid
+                            rounded
+                          />
+                        </Col>
+                        <Col>
+                          {/* product is the id here */}
+                          <Link to={`/product/${item.product}`}>
+                            {item.name}
+                          </Link>
+                        </Col>
+                        <Col md={4}>
+                          {item.qty} x ${item.price} = $
+                          {item.qty * item.price}
+                        </Col>
+                      </Row>
+                    </ListGroup.Item>
+                  ))}
+                </ListGroup>
+              )}
             </ListGroup.Item>
           </ListGroup>
         </Col>
@@ -246,11 +260,16 @@ const OrderScreen = ({ match, history }) => {
                   {loadingPay && <Loader />}
                   {!sdkReady ? (
                     <Loader />
-                  ) : (
+                  ) : window.paypal ? (
                     <PayPalButton
                       amount={order.totalPrice}
                       onSuccess={successPaymentHandler}
                     />
+                  ) : (
+                    <div>
+                      <p className="text-muted">PayPal payment is not available in development mode.</p>
+                      <p className="text-muted">To enable PayPal payments, set PAYPAL_CLIENT_ID in your .env file.</p>
+                    </div>
                   )}
                 </ListGroup.Item>
               )}

@@ -12,28 +12,46 @@ import colors from "colors";
 // morgan is logger so when someone hits a route  in backend we can actually see http verb, status code etc.
 // run in dev mode.
 import morgan from "morgan";
+import { config, getBackendPort } from "../config.js";
+import { fileURLToPath } from "url";
 
-dotenv.config();
-const mongoURI = process.env.MONGO_URI;
+const __filename = fileURLToPath(import.meta.url);
+const __dirnameBackend = path.dirname(__filename);
+
+// Use configuration from config.js which already loads the .env file
+const mongoURI = config.database.uri;
+console.log('MONGO_URI loaded:', mongoURI ? 'Yes ✅' : 'No ❌');
+console.log('Using MongoDB:', mongoURI.substring(0, 50) + '...');
 
 const connectDB = async () => {
   try {
     const conn = await mongoose.connect(mongoURI, {
-      useUnifiedTopology: true,
       useNewUrlParser: true,
+      useUnifiedTopology: true,
     });
-    console.log(`MongoDB Connected : ${conn.connection.host}.cyan.underline`);
+    console.log(`MongoDB Connected : ${conn.connection.host}`.cyan.underline);
+    return true;
   } catch (e) {
-    console.error(`Error: ${e.message}.red.underline.bold`);
-    process.exit(1);
+    console.error(`MongoDB Connection Error: ${e.message}`.red.underline.bold);
+    console.log('Please make sure MongoDB is running on localhost:27017'.yellow);
+    console.log('You can install MongoDB locally or use MongoDB Atlas'.yellow);
+    console.log('For local MongoDB: https://docs.mongodb.com/manual/installation/'.yellow);
+    console.log('For MongoDB Atlas: https://www.mongodb.com/cloud/atlas'.yellow);
+    console.log('Server will start without database connection...'.yellow);
+    return false;
   }
 };
 
-connectDB();
+// Try to connect to database but don't exit if it fails
+connectDB().then((connected) => {
+  if (!connected) {
+    console.log('⚠️  Running in offline mode - database features will not work'.yellow);
+  }
+});
 
 const app = express();
 
-if (process.env.NODE_ENV === "development") {
+if (config.env === "development") {
   app.use(morgan("dev"));
 }
 
@@ -46,7 +64,7 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/upload", uploadRoutes);
 
 app.get("/api/config/paypal", (req, res) =>
-  res.send(process.env.PAYPAL_CLIENT_ID)
+  res.send(config.paypal.clientId)
 );
 
 // uploads folder not accessible. so have to go to uploads  folder  and make it static in express
@@ -54,28 +72,32 @@ app.get("/api/config/paypal", (req, res) =>
 const __dirname = path.resolve();
 app.use("/uploads", express.static(path.join(__dirname, "/uploads")));
 
-app.use(notFound);
-app.use(errorHandler);
+// Serve images from frontend public directory
+app.use("/images", express.static(path.join(__dirname, "/frontend/public/images")));
 
-const PORT = process.env.PORT || 5000;
+const PORT = getBackendPort();
+
+// Root route for both development and production
+app.get("/", (req, res) => {
+  res.send("API is running....");
+});
 
 // for production. set frontend build folder as static folder.
-if (process.env.NODE_ENV === "production") {
+if (config.env === "production") {
   app.use(express.static(path.join(__dirname, "/frontend/build")));
 
-  // any other route will pooint to index.html.
+  // any other route will point to index.html.
   app.get("*", (req, res) => {
     res.sendFile(path.resolve(__dirname, "frontend", "build", "index.html"));
   });
-} else {
-  app.get("/", (req, res) => {
-    res.send("API is running....");
-  });
 }
+
+app.use(notFound);
+app.use(errorHandler);
 
 app.listen(
   PORT,
   console.log(
-    `Server running in ${process.env.NODE_ENV} mode on port ${PORT}`.yellow.bold
+    `Server running in ${config.env} mode on port ${PORT}`.yellow.bold
   )
 );

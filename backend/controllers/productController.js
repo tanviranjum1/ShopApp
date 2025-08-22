@@ -53,20 +53,38 @@ import Product from "../models/productModel.js";
 // @route   GET /api/products
 // @access  Public
 const getProducts = asyncHandler(async (req, res) => {
-  const pageSize = 3;
+  const pageSize = 12; // Increased page size to show more products
   const page = Number(req.query.pageNumber) || 1;
 
-  const keyword = req.query.keyword
-    ? {
-        name: {
-          $regex: req.query.keyword,
-          $options: "i",
-        },
-      }
-    : {};
+  // Build search criteria
+  const searchCriteria = {};
 
-  const count = await Product.countDocuments({ ...keyword });
-  const products = await Product.find({ ...keyword })
+  // Add keyword search if provided
+  if (req.query.keyword) {
+    searchCriteria.name = {
+      $regex: req.query.keyword,
+      $options: "i",
+    };
+  }
+
+  // Add category filter if provided
+  if (req.query.category) {
+    searchCriteria.category = {
+      $regex: req.query.category,
+      $options: "i",
+    };
+  }
+
+  // Add brand filter if provided
+  if (req.query.brand) {
+    searchCriteria.brand = {
+      $regex: req.query.brand,
+      $options: "i",
+    };
+  }
+
+  const count = await Product.countDocuments({ ...searchCriteria });
+  const products = await Product.find({ ...searchCriteria })
     .limit(pageSize)
     .skip(pageSize * (page - 1));
 
@@ -200,6 +218,45 @@ const getTopProducts = asyncHandler(async (req, res) => {
   res.json(products);
 });
 
+// @desc    Get all categories
+// @route   GET /api/products/categories
+// @access  Public
+const getCategories = asyncHandler(async (req, res) => {
+  const categories = await Product.distinct('category');
+  res.json(categories);
+});
+
+// @desc    Get all brands
+// @route   GET /api/products/brands
+// @access  Public
+const getBrands = asyncHandler(async (req, res) => {
+  const brands = await Product.distinct('brand');
+  res.json(brands);
+});
+
+// @desc    Get products by category
+// @route   GET /api/products/category/:category
+// @access  Public
+const getProductsByCategory = asyncHandler(async (req, res) => {
+  const pageSize = 12;
+  const page = Number(req.query.pageNumber) || 1;
+  const category = req.params.category;
+
+  const searchCriteria = {
+    category: {
+      $regex: category,
+      $options: "i",
+    },
+  };
+
+  const count = await Product.countDocuments({ ...searchCriteria });
+  const products = await Product.find({ ...searchCriteria })
+    .limit(pageSize)
+    .skip(pageSize * (page - 1));
+
+  res.json({ products, page, pages: Math.ceil(count / pageSize), category });
+});
+
 export {
   getProductById,
   getProducts,
@@ -208,4 +265,7 @@ export {
   updateProduct,
   createProductReview,
   getTopProducts,
+  getCategories,
+  getBrands,
+  getProductsByCategory,
 };

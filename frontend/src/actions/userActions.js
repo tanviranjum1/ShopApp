@@ -145,7 +145,7 @@ export const getUserDetails = (id) => async (dispatch, getState) => {
         ? error.response.data.message
         : error.message;
 
-    if (message === "Not authorized, token failed") {
+    if (message === "Not authorized, token failed" || message === "Not authorized, user not found") {
       dispatch(logout());
     }
     dispatch({

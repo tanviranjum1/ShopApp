@@ -2,6 +2,7 @@
 import jwt from "jsonwebtoken";
 import User from "../models/userModel.js";
 import asyncHandler from "express-async-handler";
+import { config } from '../../config.js';
 
 // to decode the token.
 const protect = asyncHandler(async (req, res, next) => {
@@ -14,21 +15,23 @@ const protect = asyncHandler(async (req, res, next) => {
     try {
       // purpose : decode the token.
       token = req.headers.authorization.split(" ")[1];
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      // console.log(decoded)
+      const decoded = jwt.verify(token, config.jwt.secret);
+      
       // without password.
       req.user = await User.findById(decoded.id).select("-password");
 
+      if (!req.user) {
+        res.status(401);
+        throw new Error("Not authorized, user not found");
+      }
+
       next();
     } catch (error) {
-      console.error(error);
+      console.error('Token verification error:', error);
       res.status(401);
       throw new Error("Not authorized, token failed.");
     }
-    console.log("token found");
-  }
-
-  if (!token) {
+  } else {
     res.status(401);
     throw new Error("Not authorized, no token");
   }

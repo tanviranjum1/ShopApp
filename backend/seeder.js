@@ -8,13 +8,25 @@ import products from './data/products.js'
 import User from './models/userModel.js'
 import Product from './models/productModel.js'
 import Order from './models/orderModel.js'
-import connectDB from './config/db.js'
 
+// Load .env file from the backend directory
 dotenv.config()
-// not creating any order but want the ability to destroy all users products and orders. so we need the order model to remove the data.
+
+// Database connection function
+const connectDB = async () => {
+  try {
+    const conn = await mongoose.connect(process.env.MONGO_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    console.log(`MongoDB Connected : ${conn.connection.host}.cyan.underline`);
+  } catch (e) {
+    console.error(`Error: ${e.message}.red.underline.bold`);
+    process.exit(1);
+  }
+};
 
 connectDB()
-
 
 // connection between products and users, want admin user to be teh object id for all products.
 // to delete all. because don't want to import stuff already in db.
@@ -59,8 +71,6 @@ const destroyData = async () => {
     process.exit(1)
   }
 }
-
-
 
 // to run node backend/seeder -d // to destroy data.
 // else without -d
