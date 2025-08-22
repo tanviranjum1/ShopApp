@@ -12,7 +12,7 @@ import colors from "colors";
 // morgan is logger so when someone hits a route  in backend we can actually see http verb, status code etc.
 // run in dev mode.
 import morgan from "morgan";
-import { config, getBackendPort } from "../config.js";
+import { config, getBackendPort } from "./config.js";
 import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
