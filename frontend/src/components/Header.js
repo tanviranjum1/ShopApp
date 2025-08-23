@@ -24,13 +24,23 @@ const Header = () => {
       <Navbar bg="dark" variant="dark" expand="lg" collapseOnSelect className="shadow-sm">
         <Container>
           <LinkContainer to="/">
-            <Navbar.Brand className="fw-bold fs-4">
-              <i className="fas fa-laptop me-2"></i>
-              ProShop
-            </Navbar.Brand>
+                         <Navbar.Brand className="fw-bold fs-4">
+               <i className="fas fa-microchip me-2"></i>
+               E-Shop
+             </Navbar.Brand>
           </LinkContainer>
           
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                     <Navbar.Toggle 
+             aria-controls="basic-navbar-nav" 
+             className="custom-toggle"
+             style={{
+               border: '3px solid #ffffff',
+               backgroundColor: 'rgba(255, 255, 255, 0.15)',
+               padding: '0.6rem 0.8rem',
+               borderRadius: '0.5rem',
+               boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)'
+             }}
+           />
           <Navbar.Collapse id="basic-navbar-nav">
             <Route render={({ history }) => <SearchBox history={history} />} />
             

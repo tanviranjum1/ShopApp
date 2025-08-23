@@ -1,6 +1,6 @@
-# 🛒 EL Shop - Full Stack E-commerce Application
+# 🛒 E-Shop - Premium Electronics E-commerce Platform
 
-A complete e-commerce application built with React frontend and Node.js backend, deployed on Vercel and Render.
+A premium electronics e-commerce platform built with React frontend and Node.js backend, featuring the latest technology products and modern UI design. Deployed on Vercel and Render.
 
 ## 🚀 Live Demo
 
@@ -245,10 +245,10 @@ npm run env:production
 3. **Environment Variables** (set in Render dashboard):
    ```
    NODE_ENV=production
-   MONGO_URI=your_mongodb_connection_string
+MONGO_URI=your_mongodb_connection_string
    JWT_SECRET=your_jwt_secret
-   PAYPAL_CLIENT_ID=your_paypal_client_id
-   BACKEND_PORT=5000
+PAYPAL_CLIENT_ID=your_paypal_client_id
+BACKEND_PORT=5000
    ```
 
 ### Frontend Deployment (Vercel)

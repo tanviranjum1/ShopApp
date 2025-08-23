@@ -1,7 +1,7 @@
 {
-  "name": "proshop",
+  "name": "e-shop",
   "version": "1.0.0",
-  "description": "MERN shopping cart app",
+      "description": "E-Shop - Premium Electronics E-commerce Platform",
   "main": "server.js",
   "type": "module",
   "scripts": {

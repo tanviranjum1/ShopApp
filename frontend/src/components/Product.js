@@ -93,10 +93,10 @@ const Product = ({ product }) => {
         </div>
 
         <div className="d-flex justify-content-between align-items-center mb-2">
-          <Card.Text className='product-price mb-0'>
+          <Card.Text className='product-price mb-0 price'>
             ${product.price}
           </Card.Text>
-          <Badge bg="secondary" className="text-white">
+          <Badge className="tech-badge">
             {product.brand}
           </Badge>
         </div>

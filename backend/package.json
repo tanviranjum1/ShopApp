@@ -1,7 +1,7 @@
 {
-  "name": "el-shop-backend",
+  "name": "e-shop-backend",
   "version": "1.0.0",
-  "description": "Backend API for EL Shop application - Render deployment package",
+      "description": "Backend API for E-Shop - Premium Electronics E-commerce Platform",
   "main": "server.js",
   "type": "module",
   "scripts": {

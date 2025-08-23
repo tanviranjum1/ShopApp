@@ -14,6 +14,10 @@ const HomeScreen = ({ match }) => {
   const keyword = match.params.keyword;
   const pageNumber = match.params.pageNumber || 1;
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [priceRange, setPriceRange] = useState([0, 1000]);
+  const [selectedBrand, setSelectedBrand] = useState('all');
+  const [selectedRating, setSelectedRating] = useState('all');
+  const [showFilters, setShowFilters] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -26,21 +30,66 @@ const HomeScreen = ({ match }) => {
     dispatch(listProducts(searchKeyword, pageNumber));
   }, [dispatch, keyword, pageNumber, selectedCategory]);
 
-  // Quick action categories - these will trigger server-side searches
-  const quickCategories = [
-    { name: 'Phones', icon: 'fas fa-mobile-alt', searchTerm: 'phone' },
-    { name: 'Laptops', icon: 'fas fa-laptop', searchTerm: 'laptop' },
-    { name: 'Cameras', icon: 'fas fa-camera', searchTerm: 'camera' },
-    { name: 'Gaming', icon: 'fas fa-gamepad', searchTerm: 'gaming' },
-    { name: 'Audio', icon: 'fas fa-headphones', searchTerm: 'headphones' },
-    { name: 'Smart Home', icon: 'fas fa-home', searchTerm: 'smart' }
-  ];
+  // Update price range when products load
+  useEffect(() => {
+    if (products && products.length > 0) {
+      const newMinPrice = Math.min(...products.map(p => p.price));
+      const newMaxPrice = Math.max(...products.map(p => p.price));
+      setPriceRange([newMinPrice, newMaxPrice]);
+    }
+  }, [products]);
 
-  // Get unique categories from current products for filtering
-  const categories = products ? [...new Set(products.map(product => product.category))] : [];
+  // Reset category filter if "Electronics" is selected (since this is an electronics shop)
+  useEffect(() => {
+    if (selectedCategory === 'electronics') {
+      setSelectedCategory('all');
+    }
+  }, [selectedCategory]);
+
+  // Get unique categories, brands, and calculate price range from current products
+  const categories = products 
+    ? [...new Set(products.map(product => product.category))].filter(category => 
+        category.toLowerCase() !== 'electronics'
+      )
+    : [];
+  const brands = products ? [...new Set(products.map(product => product.brand))] : [];
+  const maxPrice = products && products.length > 0 ? Math.max(...products.map(p => p.price)) : 1000;
+  const minPrice = products && products.length > 0 ? Math.min(...products.map(p => p.price)) : 0;
+
+  // Filter products based on selected criteria
+  const filteredProducts = products ? products.filter(product => {
+    const matchesCategory = selectedCategory === 'all' || 
+      (selectedCategory !== 'electronics' && product.category.toLowerCase().includes(selectedCategory.toLowerCase()));
+    const matchesBrand = selectedBrand === 'all' || 
+      product.brand.toLowerCase() === selectedBrand.toLowerCase();
+    const matchesPrice = product.price >= priceRange[0] && product.price <= priceRange[1];
+    const matchesRating = selectedRating === 'all' || 
+      (product.rating >= parseInt(selectedRating) && product.rating < parseInt(selectedRating) + 1);
+    
+    return matchesCategory && matchesBrand && matchesPrice && matchesRating;
+  }) : [];
 
   const handleCategoryFilter = (category) => {
     setSelectedCategory(category);
+  };
+
+  const handleBrandFilter = (brand) => {
+    setSelectedBrand(brand);
+  };
+
+  const handleRatingFilter = (rating) => {
+    setSelectedRating(rating);
+  };
+
+  const handlePriceRangeChange = (event, newValue) => {
+    setPriceRange(newValue);
+  };
+
+  const clearFilters = () => {
+    setSelectedCategory('all');
+    setSelectedBrand('all');
+    setSelectedRating('all');
+    setPriceRange([minPrice || 0, maxPrice || 1000]);
   };
 
   return (
@@ -50,6 +99,34 @@ const HomeScreen = ({ match }) => {
       {/* Hero Section with Carousel */}
       {!keyword && selectedCategory === 'all' ? (
         <div className="mb-4">
+          <div className="hero-section text-center py-5 bg-gradient-primary text-white">
+            <Container>
+                             <h1 className="display-4 fw-bold mb-3">
+                 <i className="fas fa-microchip me-3"></i>
+                 Welcome to E-Shop
+               </h1>
+                             <p className="lead mb-4">
+                 Discover the latest in electronics - from smartphones to smart home devices
+               </p>
+              <div className="hero-stats d-flex justify-content-center gap-4 mb-4">
+                <div className="stat-item">
+                  <i className="fas fa-shipping-fast fa-2x mb-2"></i>
+                  <div className="fw-bold">Free Shipping</div>
+                  <small>On orders over $50</small>
+                </div>
+                <div className="stat-item">
+                  <i className="fas fa-shield-alt fa-2x mb-2"></i>
+                  <div className="fw-bold">Secure Payment</div>
+                  <small>100% protected</small>
+                </div>
+                <div className="stat-item">
+                  <i className="fas fa-undo fa-2x mb-2"></i>
+                  <div className="fw-bold">Easy Returns</div>
+                  <small>30-day guarantee</small>
+                </div>
+              </div>
+            </Container>
+          </div>
           <ProductCarousel />
         </div>
       ) : (
@@ -65,48 +142,161 @@ const HomeScreen = ({ match }) => {
         </div>
       )}
 
-      {/* Quick Actions */}
-      {!keyword && selectedCategory === 'all' && (
+      {/* Advanced Filters */}
+      {!keyword && (
         <Container className="mb-4">
-          <div className="quick-actions">
-            {quickCategories.map((cat, index) => (
-              <Button 
-                key={index}
-                variant="outline-primary"
-                size="sm"
-                onClick={() => handleCategoryFilter(cat.searchTerm)}
-                className="quick-action-btn"
-              >
-                <i className={cat.icon}></i>
-                {cat.name}
-              </Button>
-            ))}
-          </div>
-        </Container>
-      )}
-
-      {/* Category Filter */}
-      {!keyword && categories.length > 0 && (
-        <Container className="mb-4">
-          <div className="d-flex flex-wrap gap-2 align-items-center">
-            <span className="text-muted me-2">Filter by:</span>
-            <Button
-              variant={selectedCategory === 'all' ? 'primary' : 'outline-primary'}
-              size="sm"
-              onClick={() => handleCategoryFilter('all')}
-            >
-              All Products
-            </Button>
-            {categories.map((category) => (
+          <div className="filters-section">
+            <div className="d-flex justify-content-between align-items-center mb-3">
+              <h5 className="mb-0">
+                <i className="fas fa-filter me-2"></i>
+                Filters
+              </h5>
               <Button
-                key={category}
-                variant={selectedCategory === category.toLowerCase() ? 'primary' : 'outline-primary'}
+                variant="outline-secondary"
                 size="sm"
-                onClick={() => handleCategoryFilter(category.toLowerCase())}
+                onClick={() => setShowFilters(!showFilters)}
               >
-                {category}
+                <i className={`fas fa-chevron-${showFilters ? 'up' : 'down'} me-1`}></i>
+                {showFilters ? 'Hide' : 'Show'} Filters
               </Button>
-            ))}
+            </div>
+            
+            {showFilters && (
+              <div className="filters-content">
+                <Row>
+                  {/* Category Filter */}
+                  <Col md={3} className="mb-3">
+                    <div className="filter-group">
+                      <label className="form-label fw-bold">Category</label>
+                      <div className="d-flex flex-column gap-1">
+                        <Button
+                          variant={selectedCategory === 'all' ? 'primary' : 'outline-primary'}
+                          size="sm"
+                          onClick={() => handleCategoryFilter('all')}
+                          className="text-start"
+                        >
+                          <i className="fas fa-th-large me-2"></i>
+                          All Categories
+                        </Button>
+                        {categories.map((category) => (
+                          <Button
+                            key={category}
+                            variant={selectedCategory === category.toLowerCase() ? 'primary' : 'outline-primary'}
+                            size="sm"
+                            onClick={() => handleCategoryFilter(category.toLowerCase())}
+                            className="text-start"
+                          >
+                            <i className="fas fa-tag me-2"></i>
+                            {category}
+                          </Button>
+                        ))}
+                      </div>
+                    </div>
+                  </Col>
+
+                  {/* Brand Filter */}
+                  <Col md={3} className="mb-3">
+                    <div className="filter-group">
+                      <label className="form-label fw-bold">Brand</label>
+                      <div className="d-flex flex-column gap-1">
+                        <Button
+                          variant={selectedBrand === 'all' ? 'primary' : 'outline-primary'}
+                          size="sm"
+                          onClick={() => handleBrandFilter('all')}
+                          className="text-start"
+                        >
+                          <i className="fas fa-crown me-2"></i>
+                          All Brands
+                        </Button>
+                        {brands.map((brand) => (
+                          <Button
+                            key={brand}
+                            variant={selectedBrand === brand.toLowerCase() ? 'primary' : 'outline-primary'}
+                            size="sm"
+                            onClick={() => handleBrandFilter(brand.toLowerCase())}
+                            className="text-start"
+                          >
+                            <i className="fas fa-trademark me-2"></i>
+                            {brand}
+                          </Button>
+                        ))}
+                      </div>
+                    </div>
+                  </Col>
+
+                  {/* Price Range Filter */}
+                  <Col md={3} className="mb-3">
+                    <div className="filter-group">
+                      <label className="form-label fw-bold">Price Range</label>
+                      <div className="price-range">
+                        <div className="d-flex justify-content-between mb-2">
+                          <span className="text-muted">${priceRange[0]}</span>
+                          <span className="text-muted">${priceRange[1]}</span>
+                        </div>
+                        <input
+                          type="range"
+                          className="form-range"
+                          min={minPrice}
+                          max={maxPrice}
+                          value={priceRange[1]}
+                          onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value)])}
+                        />
+                        <input
+                          type="range"
+                          className="form-range"
+                          min={minPrice}
+                          max={maxPrice}
+                          value={priceRange[0]}
+                          onChange={(e) => setPriceRange([parseInt(e.target.value), priceRange[1]])}
+                        />
+                      </div>
+                    </div>
+                  </Col>
+
+                  {/* Rating Filter */}
+                  <Col md={3} className="mb-3">
+                    <div className="filter-group">
+                      <label className="form-label fw-bold">Rating</label>
+                      <div className="d-flex flex-column gap-1">
+                        <Button
+                          variant={selectedRating === 'all' ? 'primary' : 'outline-primary'}
+                          size="sm"
+                          onClick={() => handleRatingFilter('all')}
+                          className="text-start"
+                        >
+                          <i className="fas fa-star me-2"></i>
+                          All Ratings
+                        </Button>
+                        {[4, 3, 2, 1].map((rating) => (
+                          <Button
+                            key={rating}
+                            variant={selectedRating === rating.toString() ? 'primary' : 'outline-primary'}
+                            size="sm"
+                            onClick={() => handleRatingFilter(rating.toString())}
+                            className="text-start"
+                          >
+                            <i className="fas fa-star me-2"></i>
+                            {rating}+ Stars
+                          </Button>
+                        ))}
+                      </div>
+                    </div>
+                  </Col>
+                </Row>
+
+                {/* Clear Filters */}
+                <div className="text-center mt-3">
+                  <Button
+                    variant="outline-danger"
+                    size="sm"
+                    onClick={clearFilters}
+                  >
+                    <i className="fas fa-times me-2"></i>
+                    Clear All Filters
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
         </Container>
       )}
@@ -118,11 +308,18 @@ const HomeScreen = ({ match }) => {
             {keyword ? `Search Results` : 
              selectedCategory !== 'all' ? `${selectedCategory} Products` : 'Latest Products'}
           </h1>
-          {products && products.length > 0 && (
-            <Badge bg="primary" className="fs-6">
-              {products.length} products
-            </Badge>
-          )}
+          <div className="d-flex align-items-center gap-2">
+            {filteredProducts && filteredProducts.length > 0 && (
+              <Badge bg="info" className="fs-6">
+                {filteredProducts.length} of {products.length} products
+              </Badge>
+            )}
+            {products && products.length > 0 && (
+              <Badge bg="primary" className="fs-6">
+                {products.length} total products
+              </Badge>
+            )}
+          </div>
         </div>
 
         {loading ? (
@@ -148,14 +345,36 @@ const HomeScreen = ({ match }) => {
               Browse All Products
             </Link>
           </div>
+        ) : filteredProducts.length === 0 ? (
+          <div className="text-center py-5">
+            <i className="fas fa-filter fa-3x text-muted mb-3"></i>
+            <h3 className="text-muted">No products match your filters</h3>
+            <p className="text-muted">
+              Try adjusting your filter criteria to see more products
+            </p>
+            <Button
+              variant="primary"
+              onClick={clearFilters}
+              className="me-2"
+            >
+              <i className="fas fa-times me-2"></i>
+              Clear Filters
+            </Button>
+            <Link to="/" className="btn btn-outline-primary">
+              <i className="fas fa-home me-2"></i>
+              Browse All Products
+            </Link>
+          </div>
         ) : (
           <>
             {/* Products Grid */}
-            <div className="product-grid">
-              {products && products.map((product) => (
-                <Product key={product._id} product={product} />
+            <Row>
+              {filteredProducts && filteredProducts.map((product) => (
+                <Col key={product._id} sm={12} md={6} lg={4} xl={3} className="mb-4">
+                  <Product product={product} />
+                </Col>
               ))}
-            </div>
+            </Row>
 
             {/* Pagination */}
             <div className="mt-5">
@@ -170,21 +389,21 @@ const HomeScreen = ({ match }) => {
       </Container>
 
       {/* Featured Categories */}
-      {!keyword && selectedCategory === 'all' && !loading && (
+      {!keyword && selectedCategory === 'all' && !loading && categories.length > 0 && (
         <Container className="mt-5">
           <h2 className="text-center mb-4">Shop by Category</h2>
           <Row>
-            {quickCategories.slice(0, 4).map((cat, index) => (
+            {categories.slice(0, 4).map((category, index) => (
               <Col key={index} xs={6} md={3} className="mb-3">
                 <Card className="text-center h-100 category-card">
                   <Card.Body>
-                    <i className={`${cat.icon} fa-2x text-primary mb-3`}></i>
-                    <Card.Title className="h6">{cat.name}</Card.Title>
+                    <i className="fas fa-tag fa-2x text-primary mb-3"></i>
+                    <Card.Title className="h6">{category}</Card.Title>
                     <Button 
                       variant="outline-primary"
                       size="sm"
                       className="mt-2"
-                      onClick={() => handleCategoryFilter(cat.searchTerm)}
+                      onClick={() => handleCategoryFilter(category.toLowerCase())}
                     >
                       Browse
                     </Button>
