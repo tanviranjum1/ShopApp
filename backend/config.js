@@ -1,4 +1,3 @@
-import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
@@ -6,22 +5,27 @@ import fs from 'fs';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Load environment variables from .env file in backend directory
+// Load environment variables from .env file in backend directory (if dotenv is available)
 const backendEnvPath = path.resolve(__dirname, '.env');
 const rootEnvPath = path.resolve(__dirname, '..', '.env');
 
 console.log('🔍 Looking for .env file at:', backendEnvPath);
 
-// Check if backend .env exists first, then root .env
-if (fs.existsSync(backendEnvPath)) {
-  console.log('✅ Backend .env file found');
-  dotenv.config({ path: backendEnvPath });
-} else if (fs.existsSync(rootEnvPath)) {
-  console.log('✅ Root .env file found');
-  dotenv.config({ path: rootEnvPath });
-} else {
-  console.log('❌ No .env file found');
-  console.log('ℹ️  Environment variables will be loaded from Render environment variables');
+// Try to load dotenv if available
+try {
+  const dotenv = await import('dotenv');
+  if (fs.existsSync(backendEnvPath)) {
+    console.log('✅ Backend .env file found');
+    dotenv.default.config({ path: backendEnvPath });
+  } else if (fs.existsSync(rootEnvPath)) {
+    console.log('✅ Root .env file found');
+    dotenv.default.config({ path: rootEnvPath });
+  } else {
+    console.log('❌ No .env file found');
+    console.log('ℹ️  Environment variables will be loaded from Render environment variables');
+  }
+} catch (error) {
+  console.log('ℹ️  dotenv not available, using environment variables directly');
 }
 
 // Check if MONGO_URI is available
