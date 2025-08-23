@@ -73,7 +73,14 @@ const __dirname = path.resolve();
 app.use("/uploads", express.static(path.join(__dirname, "/uploads")));
 
 // Serve images from frontend public directory
-app.use("/images", express.static(path.join(__dirname, "/frontend/public/images")));
+const imagesPath = path.join(__dirname, "/frontend/public/images");
+const uploadsPath = path.join(__dirname, "/uploads");
+console.log('Images path:', imagesPath);
+console.log('Uploads path:', uploadsPath);
+
+// Try frontend public images first, then fallback to uploads
+app.use("/images", express.static(imagesPath));
+app.use("/images", express.static(uploadsPath));
 
 const PORT = getBackendPort();
 

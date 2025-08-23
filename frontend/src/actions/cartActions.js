@@ -1,5 +1,5 @@
 import axios from "axios";
-import config from "../config";
+import apiConfig from "../config";
 import {
   CART_ADD_ITEM,
   CART_REMOVE_ITEM,
@@ -8,7 +8,7 @@ import {
 } from "../constants/cartConstants";
 
 export const addToCart = (id, qty) => async (dispatch, getState) => {
-      const { data } = await axios.get(`${config.API_BASE_URL}/api/products/${id}`);
+      const { data } = await axios.get(`${apiConfig.API_BASE_URL}/api/products/${id}`);
 
   // paylaod data will be displayed ont he cart.
   dispatch({

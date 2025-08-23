@@ -1,5 +1,5 @@
 import axios from "axios";
-import config from "../config";
+import apiConfig from "../config";
 import {
   PRODUCT_LIST_REQUEST,
   PRODUCT_LIST_SUCCESS,
@@ -34,7 +34,7 @@ export const listProducts =
       dispatch({ type: PRODUCT_LIST_REQUEST });
 
       const { data } = await axios.get(
-        `${config.API_BASE_URL}/api/products?keyword=${keyword}&pageNumber=${pageNumber}`
+        `${apiConfig.API_BASE_URL}/api/products?keyword=${keyword}&pageNumber=${pageNumber}`
       );
 
       dispatch({
@@ -56,7 +56,7 @@ export const listProductDetails = (id) => async (dispatch) => {
   try {
     dispatch({ type: PRODUCT_DETAILS_REQUEST });
 
-    const { data } = await axios.get(`${config.API_BASE_URL}/api/products/${id}`);
+    const { data } = await axios.get(`${apiConfig.API_BASE_URL}/api/products/${id}`);
 
     dispatch({
       type: PRODUCT_DETAILS_SUCCESS,
@@ -89,7 +89,7 @@ export const deleteProduct = (id) => async (dispatch, getState) => {
       },
     };
 
-    await axios.delete(`${config.API_BASE_URL}/api/products/${id}`, config);
+    await axios.delete(`${apiConfig.API_BASE_URL}/api/products/${id}`, config);
 
     dispatch({
       type: PRODUCT_DELETE_SUCCESS,
@@ -127,7 +127,7 @@ export const createProduct = () => async (dispatch, getState) => {
       },
     };
 
-    const { data } = await axios.post(`${config.API_BASE_URL}/api/products`, {}, config);
+          const { data } = await axios.post(`${apiConfig.API_BASE_URL}/api/products`, {}, config);
 
     dispatch({
       type: PRODUCT_CREATE_SUCCESS,
@@ -168,7 +168,7 @@ export const updateProduct = (product) => async (dispatch, getState) => {
     };
 
     const { data } = await axios.put(
-      `${config.API_BASE_URL}/api/products/${product._id}`,
+              `${apiConfig.API_BASE_URL}/api/products/${product._id}`,
       product,
       config
     );
@@ -212,7 +212,7 @@ export const createProductReview =
         },
       };
 
-      await axios.post(`${config.API_BASE_URL}/api/products/${productId}/reviews`, review, config);
+      await axios.post(`${apiConfig.API_BASE_URL}/api/products/${productId}/reviews`, review, config);
 
       dispatch({
         type: PRODUCT_CREATE_REVIEW_SUCCESS,
@@ -240,7 +240,7 @@ export const listTopProducts =
     try {
       dispatch({ type: PRODUCT_TOP_REQUEST });
 
-      const { data } = await axios.get(`${config.API_BASE_URL}/api/products/top`);
+      const { data } = await axios.get(`${apiConfig.API_BASE_URL}/api/products/top`);
 
       dispatch({
         type: PRODUCT_TOP_SUCCESS,

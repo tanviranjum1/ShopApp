@@ -17,8 +17,11 @@ const Product = ({ product }) => {
   }
 
   const handleImageError = (e) => {
-    e.target.style.display = 'none'
-    e.target.nextSibling.style.display = 'flex'
+    console.log('Image failed to load:', e.target.src);
+    e.target.style.display = 'none';
+    if (e.target.nextSibling) {
+      e.target.nextSibling.style.display = 'flex';
+    }
   }
 
   return (
@@ -32,8 +35,15 @@ const Product = ({ product }) => {
             onError={handleImageError}
             alt={product.name}
           />
-          <div className="product-image-placeholder" style={{ display: 'none' }}>
-            <i className="fas fa-image"></i>
+          <div className="product-image-placeholder" style={{ 
+            display: 'none', 
+            height: '200px', 
+            backgroundColor: '#f8f9fa', 
+            alignItems: 'center', 
+            justifyContent: 'center',
+            color: '#6c757d'
+          }}>
+            <i className="fas fa-image fa-3x"></i>
           </div>
         </Link>
         

@@ -10,7 +10,7 @@ import {
   deliverOrder,
 } from "../actions/orderAction";
 import axios from "axios";
-import config from "../config";
+import apiConfig from "../config";
 import { PayPalButton } from "react-paypal-button-v2";
 import {
   ORDER_PAY_RESET,
@@ -57,7 +57,7 @@ const OrderScreen = ({ match, history }) => {
 
     const addPayPalScript = async () => {
       try {
-        const { data: clientId } = await axios.get(`${config.API_BASE_URL}/api/config/paypal`);
+        const { data: clientId } = await axios.get(`${apiConfig.API_BASE_URL}/api/config/paypal`);
         
         // Check if we have a valid PayPal client ID
         if (!clientId || clientId === 'test' || clientId === 'sb') {

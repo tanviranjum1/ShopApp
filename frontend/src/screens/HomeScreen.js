@@ -37,7 +37,7 @@ const HomeScreen = ({ match }) => {
   ];
 
   // Get unique categories from current products for filtering
-  const categories = [...new Set(products.map(product => product.category))];
+  const categories = products ? [...new Set(products.map(product => product.category))] : [];
 
   const handleCategoryFilter = (category) => {
     setSelectedCategory(category);
