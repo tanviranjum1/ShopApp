@@ -1,475 +1,401 @@
-# 🛒 ProShop - MERN Stack E-Commerce Application
+# 🛒 EL Shop - Full Stack E-commerce Application
 
-A full-stack e-commerce application built with the MERN stack (MongoDB, Express.js, React.js, Node.js) featuring user authentication, product management, shopping cart functionality, and payment integration.
+A complete e-commerce application built with React frontend and Node.js backend, deployed on Vercel and Render.
+
+## 🚀 Live Demo
+
+- **Frontend**: [Vercel Deployment](https://shop-app-five-peach.vercel.app)
+- **Backend API**: [Render Deployment](https://shopapp-2-whxu.onrender.com)
 
 ## 📋 Table of Contents
 
-- [Features](#-features)
-- [Technology Stack](#-technology-stack)
-- [Database Design](#-database-design)
-- [Implementation Status](#-implementation-status)
-- [User Interaction Flow](#-user-interaction-flow)
+- [Tech Stack](#-tech-stack)
 - [Project Structure](#-project-structure)
-- [Installation & Setup](#-installation--setup)
-- [API Documentation](#-api-documentation)
-- [Development Guide](#-development-guide)
-- [Security](#-security)
-- [Contributing](#-contributing)
+- [Local Development Setup](#-local-development-setup)
+- [Environment Configuration](#-environment-configuration)
+- [Making Updates](#-making-updates)
+- [Deployment](#-deployment)
+- [Troubleshooting](#-troubleshooting)
 
-## ✨ Features
-
-### ✅ Fully Implemented
-- **User Authentication & Authorization**
-  - User registration and login
-  - JWT token-based authentication
-  - Role-based access control (Admin/User)
-  - Password encryption with bcrypt
-
-- **Product Management**
-  - Product catalog with categories
-  - Product search and filtering
-  - Product details with images
-  - Stock management
-
-- **Shopping Cart System**
-  - Add/remove items from cart
-  - Update quantities
-  - Persistent cart storage
-  - Cart total calculation
-
-- **Order Management**
-  - Order creation and processing
-  - Order history for users
-  - Order status tracking
-  - Admin order management
-
-- **File Upload System**
-  - Product image uploads
-  - File validation and storage
-  - Secure file serving
-
-### 🔄 Partially Implemented
-- **Payment Integration**
-  - PayPal integration structure
-  - Payment processing setup
-  - ⚠️ Requires PayPal credentials configuration
-
-- **Admin Dashboard**
-  - Basic admin functionality
-  - Product management
-  - ⚠️ Enhanced admin features needed
-
-### 🚧 Future Enhancements
-- **Advanced Features**
-  - Email notifications
-  - Product reviews and ratings
-  - Wishlist functionality
-  - Advanced search filters
-  - Inventory management
-  - Sales analytics
-  - Multi-language support
-  - Mobile app version
-
-## 🛠 Technology Stack
-
-### Backend
-- **Node.js** - Runtime environment
-- **Express.js** - Web framework
-- **MongoDB** - Database
-- **Mongoose** - ODM for MongoDB
-- **JWT** - Authentication
-- **bcryptjs** - Password hashing
-- **multer** - File uploads
-- **dotenv** - Environment variables
+## 🛠️ Tech Stack
 
 ### Frontend
-- **React.js** - UI framework
-- **Redux** - State management
-- **React Router** - Navigation
-- **Axios** - HTTP client
-- **Bootstrap** - CSS framework
+- **React** 16.13.1
+- **Redux** for state management
+- **React Router** for navigation
+- **React Bootstrap** for UI components
+- **Axios** for API calls
 
-### Development Tools
-- **Nodemon** - Development server
-- **Concurrently** - Run multiple commands
-- **ES6 Modules** - Modern JavaScript
+### Backend
+- **Node.js** with Express
+- **MongoDB** with Mongoose
+- **JWT** for authentication
+- **Multer** for file uploads
+- **CORS** for cross-origin requests
 
-## 🗄 Database Design
-
-### Collections Structure
-
-#### 1. Users Collection
-```javascript
-{
-  _id: ObjectId,
-  name: String (required),
-  email: String (required, unique),
-  password: String (required, hashed),
-  isAdmin: Boolean (default: false),
-  createdAt: Date,
-  updatedAt: Date
-}
-```
-
-#### 2. Products Collection
-```javascript
-{
-  _id: ObjectId,
-  name: String (required),
-  image: String (required),
-  brand: String (required),
-  category: String (required),
-  description: String (required),
-  price: Number (required),
-  countInStock: Number (required),
-  rating: Number (default: 0),
-  numReviews: Number (default: 0),
-  user: ObjectId (ref: 'User'),
-  createdAt: Date,
-  updatedAt: Date
-}
-```
-
-#### 3. Orders Collection
-```javascript
-{
-  _id: ObjectId,
-  user: ObjectId (ref: 'User'),
-  orderItems: [{
-    name: String,
-    qty: Number,
-    image: String,
-    price: Number,
-    product: ObjectId (ref: 'Product')
-  }],
-  shippingAddress: {
-    address: String,
-    city: String,
-    postalCode: String,
-    country: String
-  },
-  paymentMethod: String,
-  paymentResult: {
-    id: String,
-    status: String,
-    update_time: String,
-    email_address: String
-  },
-  taxPrice: Number,
-  shippingPrice: Number,
-  totalPrice: Number,
-  isPaid: Boolean (default: false),
-  paidAt: Date,
-  isDelivered: Boolean (default: false),
-  deliveredAt: Date,
-  createdAt: Date,
-  updatedAt: Date
-}
-```
-
-### Database Relationships
-- **One-to-Many**: User → Products (Admin users can create products)
-- **One-to-Many**: User → Orders (Users can have multiple orders)
-- **Many-to-Many**: Orders ↔ Products (Orders contain multiple products)
-
-## 📊 Implementation Status
-
-### Backend API (100% Complete)
-- ✅ User authentication endpoints
-- ✅ Product CRUD operations
-- ✅ Order management
-- ✅ File upload functionality
-- ✅ Error handling middleware
-- ✅ Input validation
-- ✅ Security middleware
-
-### Frontend Components (95% Complete)
-- ✅ User authentication forms
-- ✅ Product listing and details
-- ✅ Shopping cart functionality
-- ✅ Order management
-- ✅ Admin product management
-- ⚠️ Payment integration UI (needs PayPal setup)
-
-### Database & Seeding (100% Complete)
-- ✅ Database models and schemas
-- ✅ Sample data seeding
-- ✅ Database connection and configuration
-
-## 👥 User Interaction Flow
-
-### Customer Journey
-1. **Browse Products**
-   - View product catalog
-   - Search and filter products
-   - View product details
-
-2. **Shopping Cart**
-   - Add items to cart
-   - Update quantities
-   - Review cart contents
-
-3. **Checkout Process**
-   - User authentication/login
-   - Shipping address input
-   - Payment method selection
-   - Order confirmation
-
-4. **Order Management**
-   - View order history
-   - Track order status
-   - Receive order updates
-
-### Admin Journey
-1. **Product Management**
-   - Add new products
-   - Edit existing products
-   - Upload product images
-   - Manage inventory
-
-2. **Order Management**
-   - View all orders
-   - Update order status
-   - Process payments
-   - Manage deliveries
-
-3. **User Management**
-   - View user accounts
-   - Manage user roles
-   - Monitor user activity
+### Deployment
+- **Frontend**: Vercel
+- **Backend**: Render
+- **Database**: MongoDB Atlas
 
 ## 📁 Project Structure
 
 ```
-proshop/
-├── backend/                    # Backend server
-│   ├── controllers/           # Request handlers
-│   │   ├── orderController.js
-│   │   ├── productController.js
-│   │   └── userController.js
-│   ├── data/                  # Sample data
-│   │   ├── products.js
-│   │   └── users.js
-│   ├── middleware/            # Custom middleware
-│   │   ├── authMiddleware.js
-│   │   └── errorMiddleware.js
-│   ├── models/               # Database models
-│   │   ├── orderModel.js
-│   │   ├── productModel.js
-│   │   └── userModel.js
-│   ├── routes/               # API routes
-│   │   ├── orderRoutes.js
-│   │   ├── productRoutes.js
-│   │   ├── uploadRoutes.js
-│   │   └── userRoutes.js
-│   ├── utils/                # Utility functions
-│   │   └── generateToken.js
-│   ├── server.js             # Main server file
-│   └── seeder.js             # Database seeder
-├── frontend/                 # React application
-│   ├── public/              # Static files
-│   └── src/                 # Source code
-│       ├── actions/         # Redux actions
-│       ├── components/      # Reusable components
-│       ├── constants/       # Redux constants
-│       ├── reducers/        # Redux reducers
-│       ├── screens/         # Page components
-│       ├── App.js           # Main app component
-│       └── store.js         # Redux store
-├── uploads/                 # File uploads directory
-├── scripts/                 # Utility scripts
-├── config.js               # Application configuration
-├── package.json            # Dependencies
-└── README.md              # This file
+el-shop-app/
+├── frontend/                 # React frontend application
+│   ├── public/
+│   │   ├── _redirects       # Vercel SPA routing
+│   │   └── images/          # Product images
+│   ├── src/
+│   │   ├── actions/         # Redux actions
+│   │   ├── components/      # React components
+│   │   ├── reducers/        # Redux reducers
+│   │   ├── screens/         # Page components
+│   │   ├── config.js        # API configuration
+│   │   └── App.js           # Main app component
+│   ├── package.json
+│   └── vercel.json          # Vercel deployment config
+├── backend/                  # Node.js backend API
+│   ├── controllers/         # Route controllers
+│   ├── data/               # Static data (products, users)
+│   ├── middleware/         # Express middleware
+│   ├── models/             # MongoDB models
+│   ├── routes/             # API routes
+│   ├── uploads/            # Uploaded files
+│   ├── config.js           # Environment configuration
+│   ├── server.js           # Main server file
+│   └── package.json
+├── render.yaml             # Render deployment config
+└── README.md
 ```
 
-## 🚀 Installation & Setup
+## 🏠 Local Development Setup
 
 ### Prerequisites
 - Node.js (v14 or higher)
-- MongoDB (local or MongoDB Atlas)
 - npm or yarn
+- MongoDB Atlas account (or local MongoDB)
 
-### Quick Start
+### Step 1: Clone and Install Dependencies
 
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd proshop
-   ```
+```bash
+# Clone the repository
+git clone https://github.com/tanviranjum1/ShopApp.git
+cd el-shop-app
 
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
+# Install backend dependencies
+cd backend
+npm install
 
-3. **Environment setup**
-   ```bash
-   cp .env.example .env
-   # Edit .env with your configuration
-   ```
+# Install frontend dependencies
+cd ../frontend
+npm install
+```
 
-4. **Seed the database**
-   ```bash
-   npm run data:import
-   ```
+### Step 2: Environment Configuration
 
-5. **Start the application**
-   ```bash
-   npm run dev
-   ```
+#### Backend Environment Variables
+Create a `.env` file in the root directory:
 
-### Environment Variables
 ```env
 NODE_ENV=development
-MONGO_URI=your_mongodb_connection_string
-JWT_SECRET=your_secure_jwt_secret
+MONGO_URI=mongodb+srv://your_username:your_password@your_cluster.mongodb.net/proshop
+JWT_SECRET=your_jwt_secret_key
 PAYPAL_CLIENT_ID=your_paypal_client_id
 BACKEND_PORT=5000
 FRONTEND_PORT=3000
 ```
 
-## 📚 API Documentation
+#### Frontend Environment Variables
+Create a `.env.local` file in the frontend directory:
+
+```env
+REACT_APP_USE_LOCAL=true
+REACT_APP_BACKEND_URL=http://localhost:5000
+```
+
+### Step 3: Start Development Servers
+
+#### Option A: Start from Root Directory (Recommended)
+```bash
+# From project root
+npm start
+```
+
+#### Option B: Start Backend and Frontend Separately
+```bash
+# Terminal 1: Start backend
+cd backend
+npm start
+
+# Terminal 2: Start frontend
+cd frontend
+npm start
+```
+
+### Step 4: Access the Application
+- **Frontend**: http://localhost:3000
+- **Backend API**: http://localhost:5000
+- **API Documentation**: http://localhost:5000/api/products
+
+## 🔧 Environment Configuration
+
+### Local Development
+- **Backend**: Uses `.env` file from root directory
+- **Frontend**: Uses proxy configuration in `package.json`
+- **Database**: MongoDB Atlas (configured via MONGO_URI)
+
+### Production Deployment
+- **Backend**: Environment variables set in Render dashboard
+- **Frontend**: Environment variables set in Vercel dashboard
+- **Database**: Same MongoDB Atlas instance
+
+### Environment Switching
+Use the provided scripts to switch between local and production:
+
+```bash
+# Switch to local development
+npm run env:local
+
+# Switch to production
+npm run env:production
+```
+
+## 🔄 Making Updates
+
+### Frontend Updates
+
+1. **Navigate to frontend directory:**
+   ```bash
+   cd frontend
+   ```
+
+2. **Make your changes** in the appropriate files:
+   - Components: `src/components/`
+   - Pages: `src/screens/`
+   - State management: `src/actions/` and `src/reducers/`
+   - Configuration: `src/config.js`
+
+3. **Test locally:**
+   ```bash
+   npm start
+   ```
+
+4. **Build for production:**
+   ```bash
+   npm run build
+   ```
+
+### Backend Updates
+
+1. **Navigate to backend directory:**
+   ```bash
+   cd backend
+   ```
+
+2. **Make your changes** in the appropriate files:
+   - Controllers: `controllers/`
+   - Routes: `routes/`
+   - Models: `models/`
+   - Configuration: `config.js`
+
+3. **Test locally:**
+   ```bash
+   npm start
+   ```
+
+4. **Test API endpoints:**
+   ```bash
+   curl http://localhost:5000/api/products
+   ```
+
+### Database Updates
+
+1. **Update static data:**
+   - Products: `backend/data/products.js`
+   - Users: `backend/data/users.js`
+
+2. **Update models:**
+   - Product model: `backend/models/productModel.js`
+   - User model: `backend/models/userModel.js`
+   - Order model: `backend/models/orderModel.js`
+
+3. **Seed data (if needed):**
+   ```bash
+   cd backend
+   node seeder.js
+   ```
+
+## 🚀 Deployment
+
+### Backend Deployment (Render)
+
+1. **Push changes to Git:**
+   ```bash
+   git add .
+   git commit -m "Update backend functionality"
+   git push origin main
+   ```
+
+2. **Render will auto-deploy** with the following configuration:
+   - **Root Directory**: `backend`
+   - **Build Command**: `npm install`
+   - **Start Command**: `node server.js`
+
+3. **Environment Variables** (set in Render dashboard):
+   ```
+   NODE_ENV=production
+   MONGO_URI=your_mongodb_connection_string
+   JWT_SECRET=your_jwt_secret
+   PAYPAL_CLIENT_ID=your_paypal_client_id
+   BACKEND_PORT=5000
+   ```
+
+### Frontend Deployment (Vercel)
+
+1. **Update backend URL** in frontend configuration:
+   ```javascript
+   // frontend/src/config.js
+   API_BASE_URL: 'https://your-new-backend-url.onrender.com'
+   ```
+
+2. **Push changes to Git:**
+   ```bash
+   git add .
+   git commit -m "Update frontend for new backend"
+   git push origin main
+   ```
+
+3. **Vercel will auto-deploy** with the following configuration:
+   - **Build Command**: `npm run build`
+   - **Output Directory**: `build`
+   - **Environment Variables** (set in Vercel dashboard):
+     ```
+     REACT_APP_BACKEND_URL=https://your-backend-url.onrender.com
+     REACT_APP_USE_LOCAL=false
+     NODE_OPTIONS=--openssl-legacy-provider
+     ```
+
+### Deployment Checklist
+
+- [ ] Backend tests pass locally
+- [ ] Frontend builds successfully
+- [ ] Environment variables configured
+- [ ] Database connection working
+- [ ] CORS settings updated
+- [ ] Image URLs updated for production
+- [ ] API endpoints responding correctly
+
+## 🔍 Troubleshooting
+
+### Common Issues
+
+#### 1. OpenSSL Compatibility Error
+**Error**: `error:0308010C:digital envelope routines::unsupported`
+
+**Solution**: 
+- Use `cross-env` in package.json scripts
+- Set `NODE_OPTIONS=--openssl-legacy-provider`
+
+#### 2. CORS Errors
+**Error**: `Access to XMLHttpRequest has been blocked by CORS policy`
+
+**Solution**:
+- Update CORS configuration in `backend/server.js`
+- Add your frontend domain to allowed origins
+
+#### 3. Environment Variables Not Loading
+**Error**: `Cannot find package 'dotenv'`
+
+**Solution**:
+- Backend now loads environment variables directly from `process.env`
+- No dotenv dependency needed
+- Set variables in Render dashboard
+
+#### 4. 404 Errors on Frontend Routes
+**Error**: `404: NOT_FOUND` on client-side routes
+
+**Solution**:
+- Ensure `_redirects` file exists in `frontend/public/`
+- Verify `vercel.json` has proper routes configuration
+
+#### 5. Image Loading Issues
+**Error**: Product images not displaying
+
+**Solution**:
+- Update image URLs in `backend/data/products.js`
+- Ensure images are copied to `backend/uploads/`
+- Check static file serving in `backend/server.js`
+
+### Debug Commands
+
+```bash
+# Test backend API
+curl https://your-backend-url.onrender.com/api/products
+
+# Test frontend build
+cd frontend
+npm run build
+
+# Check environment variables
+echo $MONGO_URI
+echo $NODE_ENV
+
+# Test database connection
+cd backend
+node -e "console.log(process.env.MONGO_URI)"
+```
+
+### Logs and Monitoring
+
+- **Render Backend**: Check logs in Render dashboard
+- **Vercel Frontend**: Check logs in Vercel dashboard
+- **MongoDB**: Monitor in MongoDB Atlas dashboard
+
+## 📝 API Documentation
 
 ### Authentication Endpoints
 - `POST /api/users/login` - User login
 - `POST /api/users/register` - User registration
-- `GET /api/users/profile` - Get user profile (protected)
-- `PUT /api/users/profile` - Update user profile (protected)
+- `GET /api/users/profile` - Get user profile
+- `PUT /api/users/profile` - Update user profile
 
 ### Product Endpoints
 - `GET /api/products` - Get all products
 - `GET /api/products/:id` - Get single product
-- `POST /api/products` - Create product (admin only)
-- `PUT /api/products/:id` - Update product (admin only)
-- `DELETE /api/products/:id` - Delete product (admin only)
+- `GET /api/products/top` - Get top-rated products
+- `POST /api/products` - Create product (admin)
+- `PUT /api/products/:id` - Update product (admin)
+- `DELETE /api/products/:id` - Delete product (admin)
 
 ### Order Endpoints
-- `POST /api/orders` - Create order (protected)
-- `GET /api/orders/myorders` - Get user orders (protected)
-- `GET /api/orders/:id` - Get order by ID (protected)
-- `PUT /api/orders/:id/pay` - Update order to paid (protected)
-- `PUT /api/orders/:id/deliver` - Update order to delivered (admin only)
-
-### Upload Endpoints
-- `POST /api/upload` - Upload file (admin only)
-
-## 👨‍💻 Development Guide
-
-### Adding New Features
-
-#### 1. Backend Development
-```javascript
-// 1. Create model (backend/models/)
-const newModel = new mongoose.Schema({
-  // Define schema
-});
-
-// 2. Create controller (backend/controllers/)
-export const createItem = asyncHandler(async (req, res) => {
-  // Implementation
-});
-
-// 3. Create routes (backend/routes/)
-router.post('/', createItem);
-
-// 4. Add to server.js
-app.use('/api/items', itemRoutes);
-```
-
-#### 2. Frontend Development
-```javascript
-// 1. Create Redux actions (frontend/src/actions/)
-export const fetchItems = () => async (dispatch) => {
-  // Implementation
-};
-
-// 2. Create Redux reducer (frontend/src/reducers/)
-const itemReducer = (state = {}, action) => {
-  // Implementation
-};
-
-// 3. Create component (frontend/src/components/)
-const ItemComponent = () => {
-  // Implementation
-};
-```
-
-### Code Style Guidelines
-- Use ES6+ features
-- Follow RESTful API conventions
-- Implement proper error handling
-- Add input validation
-- Write meaningful comments
-- Use consistent naming conventions
-
-### Testing
-```bash
-# Run backend tests
-npm test
-
-# Run frontend tests
-cd frontend && npm test
-```
-
-## 🔒 Security
-
-### Implemented Security Measures
-- ✅ JWT token authentication
-- ✅ Password encryption with bcrypt
-- ✅ Environment variable protection
-- ✅ Input validation and sanitization
-- ✅ File upload security
-- ✅ CORS configuration
-- ✅ Error handling without sensitive data exposure
-
-### Security Best Practices
-- Never commit `.env` files
-- Use strong, unique passwords
-- Regularly update dependencies
-- Implement rate limiting
-- Use HTTPS in production
-- Validate all user inputs
+- `POST /api/orders` - Create order
+- `GET /api/orders/myorders` - Get user orders
+- `GET /api/orders/:id` - Get order by ID
+- `PUT /api/orders/:id/pay` - Update order to paid
+- `PUT /api/orders/:id/deliver` - Update order to delivered (admin)
 
 ## 🤝 Contributing
 
-### Development Workflow
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
-
-### Code Review Process
-- All changes require review
-- Ensure code follows style guidelines
-- Test functionality thoroughly
-- Update documentation if needed
-
-### Reporting Issues
-- Use GitHub issues
-- Provide detailed bug reports
-- Include steps to reproduce
-- Specify environment details
+4. Test locally
+5. Push to your branch
+6. Create a pull request
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License.
 
-## 🙏 Acknowledgments
+## 🆘 Support
 
-- MongoDB Atlas for database hosting
-- PayPal for payment integration
-- Bootstrap for UI components
-- React and Node.js communities
-
-## 📞 Support
-
-For support and questions:
-- Create an issue on GitHub
-- Check the documentation
-- Review the security checklist
+For issues and questions:
+1. Check the troubleshooting section
+2. Review the deployment logs
+3. Test locally to isolate the issue
+4. Create an issue with detailed error information
 
 ---
 
-**Happy Coding! 🚀**
+**Happy Coding! 🎉**
