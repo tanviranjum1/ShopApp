@@ -2,7 +2,7 @@
 const getImageUrl = (imagePath) => {
   // For production, use the Render URL
   if (process.env.NODE_ENV === 'production') {
-    return `https://shopapp-1-bedt.onrender.com${imagePath}`;
+    return `https://shopapp-2-whxu.onrender.com${imagePath}`;
   }
   // For development, use localhost
   return `http://127.0.0.1:5000${imagePath}`;

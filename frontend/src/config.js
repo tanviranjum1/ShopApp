@@ -3,7 +3,7 @@ const isLocal = process.env.REACT_APP_USE_LOCAL === 'true' || process.env.NODE_E
 
 const config = {
   // Use local backend if REACT_APP_USE_LOCAL=true, otherwise use production backend
-  API_BASE_URL: isLocal ? '' : (process.env.REACT_APP_BACKEND_URL || 'https://shopapp-1-bedt.onrender.com'),
+  API_BASE_URL: isLocal ? '' : (process.env.REACT_APP_BACKEND_URL || 'https://shopapp-2-whxu.onrender.com'),
 };
 
 // Debug logging
