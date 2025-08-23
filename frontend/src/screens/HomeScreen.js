@@ -81,10 +81,6 @@ const HomeScreen = ({ match }) => {
     setSelectedRating(rating);
   };
 
-  const handlePriceRangeChange = (event, newValue) => {
-    setPriceRange(newValue);
-  };
-
   const clearFilters = () => {
     setSelectedCategory('all');
     setSelectedBrand('all');
