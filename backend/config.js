@@ -5,36 +5,12 @@ import fs from 'fs';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Load environment variables from .env file in backend directory (if dotenv is available)
-const backendEnvPath = path.resolve(__dirname, '.env');
-const rootEnvPath = path.resolve(__dirname, '..', '.env');
-
-console.log('🔍 Looking for .env file at:', backendEnvPath);
-
-// Try to load dotenv if available
-try {
-  const dotenv = await import('dotenv');
-  if (fs.existsSync(backendEnvPath)) {
-    console.log('✅ Backend .env file found');
-    dotenv.default.config({ path: backendEnvPath });
-  } else if (fs.existsSync(rootEnvPath)) {
-    console.log('✅ Root .env file found');
-    dotenv.default.config({ path: rootEnvPath });
-  } else {
-    console.log('❌ No .env file found');
-    console.log('ℹ️  Environment variables will be loaded from Render environment variables');
-  }
-} catch (error) {
-  console.log('ℹ️  dotenv not available, using environment variables directly');
-}
+console.log('🔍 Environment configuration loaded');
 
 // Check if MONGO_URI is available
 if (!process.env.MONGO_URI) {
-  console.log('⚠️  MONGO_URI not found in .env, please set it manually');
-  console.log('   You can set it by running:');
-  console.log('   $env:MONGO_URI="your_mongodb_connection_string"');
-  console.log('   Or create a .env file in the backend directory with: MONGO_URI=your_connection_string');
-  console.log('   Or set it as an environment variable in Render');
+  console.log('⚠️  MONGO_URI not found in environment variables');
+  console.log('   Please set MONGO_URI as an environment variable in Render');
 } else {
   console.log('✅ MONGO_URI loaded successfully');
 }

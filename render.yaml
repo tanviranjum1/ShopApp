@@ -1,11 +1,10 @@
 services:
   - type: web
-    name: el-shop-backend
+    name: eshop-backend
     env: node
     plan: free
-    rootDir: backend
-    buildCommand: npm install
-    startCommand: npm start
+    buildCommand: cd backend && npm install
+    startCommand: cd backend && node server.js
     envVars:
       - key: NODE_ENV
         value: production
@@ -16,6 +15,6 @@ services:
       - key: PAYPAL_CLIENT_ID
         sync: false
       - key: BACKEND_PORT
-        value: 10000
+        value: 5000
     healthCheckPath: /
     autoDeploy: true
