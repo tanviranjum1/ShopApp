@@ -6,10 +6,14 @@
       "use": "@vercel/static-build",
       "config": {
         "distDir": "build"
+      },
+      "env": {
+        "NODE_OPTIONS": "--openssl-legacy-provider"
       }
     }
   ],
   "env": {
+    "REACT_APP_BACKEND_URL": "https://shopapp-1-bedt.onrender.com",
     "NODE_OPTIONS": "--openssl-legacy-provider"
   }
 }

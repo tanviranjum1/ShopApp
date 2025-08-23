@@ -1,4 +1,5 @@
 import axios from "axios";
+import config from "../config";
 import {
   PRODUCT_LIST_REQUEST,
   PRODUCT_LIST_SUCCESS,
@@ -25,32 +26,6 @@ import {
 import { logout } from "../actions/userActions";
 
 // actioncreators. thunk to add in function within another function.
-/*
-export const listProducts =
-  (keyword = "", pageNumber = "") =>
-  async (dispatch) => {
-    try {
-      dispatch({ type: PRODUCT_LIST_REQUEST });
-
-      const { data } = await axios.get(
-        `/api/products?keyword=${keyword}&pageNumber=${pageNumber}`
-      );
-
-      dispatch({
-        type: PRODUCT_LIST_SUCCESS,
-        payload: data,
-      });
-    } catch (error) {
-      dispatch({
-        type: PRODUCT_LIST_FAIL,
-        payload:
-          error.response && error.response.data.message
-            ? error.response.data.message
-            : error.message,
-      });
-    }
-  };
-*/
 
 export const listProducts =
   (keyword = "", pageNumber = "") =>
@@ -59,7 +34,7 @@ export const listProducts =
       dispatch({ type: PRODUCT_LIST_REQUEST });
 
       const { data } = await axios.get(
-        `/api/products?keyword=${keyword}&pageNumber=${pageNumber}`
+        `${config.API_BASE_URL}/api/products?keyword=${keyword}&pageNumber=${pageNumber}`
       );
 
       dispatch({
@@ -81,7 +56,7 @@ export const listProductDetails = (id) => async (dispatch) => {
   try {
     dispatch({ type: PRODUCT_DETAILS_REQUEST });
 
-    const { data } = await axios.get(`/api/products/${id}`);
+    const { data } = await axios.get(`${config.API_BASE_URL}/api/products/${id}`);
 
     dispatch({
       type: PRODUCT_DETAILS_SUCCESS,
@@ -114,7 +89,7 @@ export const deleteProduct = (id) => async (dispatch, getState) => {
       },
     };
 
-    await axios.delete(`/api/products/${id}`, config);
+    await axios.delete(`${config.API_BASE_URL}/api/products/${id}`, config);
 
     dispatch({
       type: PRODUCT_DELETE_SUCCESS,
@@ -152,7 +127,7 @@ export const createProduct = () => async (dispatch, getState) => {
       },
     };
 
-    const { data } = await axios.post(`/api/products`, {}, config);
+    const { data } = await axios.post(`${config.API_BASE_URL}/api/products`, {}, config);
 
     dispatch({
       type: PRODUCT_CREATE_SUCCESS,
@@ -193,7 +168,7 @@ export const updateProduct = (product) => async (dispatch, getState) => {
     };
 
     const { data } = await axios.put(
-      `/api/products/${product._id}`,
+      `${config.API_BASE_URL}/api/products/${product._id}`,
       product,
       config
     );
@@ -237,7 +212,7 @@ export const createProductReview =
         },
       };
 
-      await axios.post(`/api/products/${productId}/reviews`, review, config);
+      await axios.post(`${config.API_BASE_URL}/api/products/${productId}/reviews`, review, config);
 
       dispatch({
         type: PRODUCT_CREATE_REVIEW_SUCCESS,
@@ -265,7 +240,7 @@ export const listTopProducts =
     try {
       dispatch({ type: PRODUCT_TOP_REQUEST });
 
-      const { data } = await axios.get(`/api/products/top`);
+      const { data } = await axios.get(`${config.API_BASE_URL}/api/products/top`);
 
       dispatch({
         type: PRODUCT_TOP_SUCCESS,
