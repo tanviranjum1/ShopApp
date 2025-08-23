@@ -2,6 +2,7 @@
 import path from "path";
 import express from "express";
 import dotenv from "dotenv";
+import cors from "cors";
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 import mongoose from "mongoose";
 import productRoutes from "./routes/productRoutes.js";
@@ -50,6 +51,41 @@ connectDB().then((connected) => {
 });
 
 const app = express();
+
+// CORS configuration
+const corsOptions = {
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    // Allow localhost for development
+    if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
+      return callback(null, true);
+    }
+    
+    // Allow Vercel domains
+    if (origin.includes('vercel.app')) {
+      return callback(null, true);
+    }
+    
+    // Allow specific domains
+    const allowedOrigins = [
+      'https://electronics-shop-dc4vy0myj-tanviranjum1s-projects.vercel.app',
+      'https://electronics-shop-hh9ef3qc0-tanviranjum1s-projects.vercel.app',
+      'https://shopapp-1-bedt.onrender.com'
+    ];
+    
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    
+    callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true,
+  optionsSuccessStatus: 200
+};
+
+app.use(cors(corsOptions));
 
 if (config.env === "development") {
   app.use(morgan("dev"));

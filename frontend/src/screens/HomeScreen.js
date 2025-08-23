@@ -118,7 +118,7 @@ const HomeScreen = ({ match }) => {
             {keyword ? `Search Results` : 
              selectedCategory !== 'all' ? `${selectedCategory} Products` : 'Latest Products'}
           </h1>
-          {products.length > 0 && (
+          {products && products.length > 0 && (
             <Badge bg="primary" className="fs-6">
               {products.length} products
             </Badge>
@@ -131,7 +131,7 @@ const HomeScreen = ({ match }) => {
           </div>
         ) : error ? (
           <Message variant="danger">{error}</Message>
-        ) : products.length === 0 ? (
+        ) : !products || products.length === 0 ? (
           <div className="text-center py-5">
             <i className="fas fa-search fa-3x text-muted mb-3"></i>
             <h3 className="text-muted">No products found</h3>
@@ -152,7 +152,7 @@ const HomeScreen = ({ match }) => {
           <>
             {/* Products Grid */}
             <div className="product-grid">
-              {products.map((product) => (
+              {products && products.map((product) => (
                 <Product key={product._id} product={product} />
               ))}
             </div>
