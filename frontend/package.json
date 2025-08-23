@@ -27,7 +27,9 @@
     "build": "cross-env NODE_OPTIONS=--openssl-legacy-provider react-scripts build",
     "build:unix": "NODE_OPTIONS=--openssl-legacy-provider react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "env:local": "node scripts/switch-env.js local",
+    "env:production": "node scripts/switch-env.js production"
   },
   "eslintConfig": {
     "extends": "react-app"

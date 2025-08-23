@@ -11,6 +11,7 @@
   ],
   "env": {
     "REACT_APP_BACKEND_URL": "https://shopapp-1-bedt.onrender.com",
+    "REACT_APP_USE_LOCAL": "false",
     "NODE_OPTIONS": "--openssl-legacy-provider"
   }
 }
