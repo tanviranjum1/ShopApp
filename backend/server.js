@@ -1,7 +1,6 @@
 // with es 2015 to bring in files you need to include extension.
 import path from "path";
 import express from "express";
-import dotenv from "dotenv";
 import cors from "cors";
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 import mongoose from "mongoose";

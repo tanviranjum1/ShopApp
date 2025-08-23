@@ -1,4 +1,3 @@
-import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
@@ -6,23 +5,7 @@ import fs from 'fs';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Load environment variables from .env file in root directory
-const rootEnvPath = path.resolve(__dirname, '.env');
-console.log('🔍 Looking for .env file at:', rootEnvPath);
-
-// Check if file exists first
-if (fs.existsSync(rootEnvPath)) {
-  console.log('✅ .env file found');
-  const result = dotenv.config({ path: rootEnvPath });
-  
-  if (result.error) {
-    console.log('❌ Error loading .env file:', result.error.message);
-  } else {
-    console.log('✅ .env file loaded successfully');
-  }
-} else {
-  console.log('❌ .env file not found at:', rootEnvPath);
-}
+console.log('🔍 Environment configuration loaded');
 
 // Check if MONGO_URI is available
 if (!process.env.MONGO_URI) {

@@ -1,5 +1,4 @@
 import mongoose from 'mongoose'
-import dotenv from 'dotenv'
 import colors from 'colors'
 import users from './data/users.js'
 import products from './data/products.js'
@@ -9,8 +8,7 @@ import User from './models/userModel.js'
 import Product from './models/productModel.js'
 import Order from './models/orderModel.js'
 
-// Load .env file from the backend directory
-dotenv.config()
+// Environment variables are loaded from Render or process.env
 
 // Database connection function
 const connectDB = async () => {

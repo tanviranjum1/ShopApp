@@ -7,6 +7,46 @@ const __dirname = path.dirname(__filename);
 
 console.log('🔍 Environment configuration loaded');
 
+// Load .env file manually without dotenv dependency
+const loadEnvFile = (filePath) => {
+  if (fs.existsSync(filePath)) {
+    console.log(`✅ Loading .env file from: ${filePath}`);
+    const envContent = fs.readFileSync(filePath, 'utf8');
+    const lines = envContent.split('\n');
+    
+    lines.forEach(line => {
+      const trimmedLine = line.trim();
+      if (trimmedLine && !trimmedLine.startsWith('#')) {
+        const [key, ...valueParts] = trimmedLine.split('=');
+        if (key && valueParts.length > 0) {
+          const value = valueParts.join('=').trim();
+          // Only set if not already set in process.env
+          if (!process.env[key]) {
+            process.env[key] = value;
+          }
+        }
+      }
+    });
+    return true;
+  }
+  return false;
+};
+
+// Try to load .env files from different locations
+const backendEnvPath = path.resolve(__dirname, '.env');
+const rootEnvPath = path.resolve(__dirname, '..', '.env');
+
+console.log('🔍 Looking for .env files...');
+
+if (loadEnvFile(backendEnvPath)) {
+  console.log('✅ Backend .env file loaded');
+} else if (loadEnvFile(rootEnvPath)) {
+  console.log('✅ Root .env file loaded');
+} else {
+  console.log('❌ No .env file found');
+  console.log('ℹ️  Environment variables will be loaded from system environment');
+}
+
 // Check if MONGO_URI is available
 if (!process.env.MONGO_URI) {
   console.log('⚠️  MONGO_URI not found in environment variables');
