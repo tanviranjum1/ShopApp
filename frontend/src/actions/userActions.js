@@ -72,7 +72,9 @@ export const logout = () => (dispatch) => {
   dispatch({ type: USER_DETAILS_RESET });
   dispatch({ type: ORDER_LIST_MY_RESET });
   dispatch({ type: USER_LIST_RESET });
-  document.location.href = "/login";
+  
+  // Use window.location.href instead of document.location.href for better compatibility
+  window.location.href = "/login";
 };
 
 export const register = (name, email, password) => async (dispatch) => {
